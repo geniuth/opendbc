@@ -43,12 +43,26 @@ class Signal:
   factor: float
   offset: float
   is_little_endian: bool
-  checksum_variant: int
-  checksum_variant_valid: bool
   has_checksum_variants: bool = False
   type: int = SignalType.DEFAULT
   calc_checksum: 'Callable[[int, Signal, bytearray], int] | None' = None
 
+
+class ChecksumVariantRegistry:
+  def __init__(self):
+    self._variant_map: dict[int, int] = {}
+
+  def get(self, address: int) -> int | None:
+    return self._variant_map.get(address)
+
+  def set(self, address: int, variant_index: int) -> None:
+    self._variant_map[address] = variant_index
+
+  def has(self, address: int) -> bool:
+    return address in self._variant_map
+
+  def reset(self) -> None:
+    self._variant_map.clear()
 
 
 @dataclass
@@ -80,12 +94,15 @@ class DBC:
   addr_to_msg: dict[int, Msg]
   name_to_msg: dict[str, Msg]
   vals: list[Val]
+  
+  checksum_registry = ChecksumVariantRegistry() 
 
   def __init__(self, name: str):
     dbc_path = name
     if not os.path.exists(dbc_path):
       dbc_path = os.path.join(DBC_PATH, name + ".dbc")
 
+    DBC.checksum_registry.reset()
     self._parse(dbc_path)
 
   def _parse(self, path: str):
@@ -94,8 +111,6 @@ class DBC:
       lines = f.readlines()
 
     checksum_state = get_checksum_state(self.name)
-    checksum_variant = 0
-    checksum_variant_valid = False
     be_bits = [j + i * 8 for i in range(64) for j in range(7, -1, -1)]
     self.msgs: dict[int, Msg] = {}
     self.addr_to_msg: dict[int, Msg] = {}
@@ -141,7 +156,7 @@ class DBC:
           lsb = be_bits[idx + size - 1]
           msb = start_bit
 
-        sig = Signal(sig_name, start_bit, msb, lsb, size, is_signed, factor, offset_val, is_little_endian, checksum_variant, checksum_variant_valid)
+        sig = Signal(sig_name, start_bit, msb, lsb, size, is_signed, factor, offset_val, is_little_endian)
         set_signal_type(sig, checksum_state, self.name, line_num)
         signals_temp[address][sig_name] = sig
       elif line.startswith("VAL_ "):
