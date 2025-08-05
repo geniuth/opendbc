@@ -44,6 +44,7 @@ class Signal:
   offset: float
   is_little_endian: bool
   checksum_variant: int
+  checksum_variant_valid: bool
   has_checksum_variants: bool = False
   type: int = SignalType.DEFAULT
   calc_checksum: 'Callable[[int, Signal, bytearray], int] | None' = None
@@ -94,6 +95,7 @@ class DBC:
 
     checksum_state = get_checksum_state(self.name)
     checksum_variant = 0
+    checksum_variant_valid = False
     be_bits = [j + i * 8 for i in range(64) for j in range(7, -1, -1)]
     self.msgs: dict[int, Msg] = {}
     self.addr_to_msg: dict[int, Msg] = {}
@@ -139,7 +141,7 @@ class DBC:
           lsb = be_bits[idx + size - 1]
           msb = start_bit
 
-        sig = Signal(sig_name, start_bit, msb, lsb, size, is_signed, factor, offset_val, is_little_endian, checksum_variant)
+        sig = Signal(sig_name, start_bit, msb, lsb, size, is_signed, factor, offset_val, is_little_endian, checksum_variant, checksum_variant_valid)
         set_signal_type(sig, checksum_state, self.name, line_num)
         signals_temp[address][sig_name] = sig
       elif line.startswith("VAL_ "):
