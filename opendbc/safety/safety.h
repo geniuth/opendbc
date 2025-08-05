@@ -166,27 +166,42 @@ static bool rx_msg_safety_check(const CANPacket_t *msg,
 
   if (index != -1) {
     // checksum check
-    if ((safety_hooks->get_checksum != NULL) && (safety_hooks->compute_checksum != NULL) && !cfg->rx_checks[index].msg[cfg->rx_checks[index].status.index].ignore_checksum) {
+    const addr_checks *chk = &cfg->rx_checks[index];
+    const msg_checks *mchk = &chk->msg[chk->status.index];
+    bool ignore_checksum = mchk->ignore_checksum;
+
+    if (!ignore_checksum && (safety_hooks->get_checksum != NULL)) {
       uint32_t checksum = safety_hooks->get_checksum(msg);
-      uint32_t checksum_comp = safety_hooks->compute_checksum(msg);
-      cfg->rx_checks[index].status.valid_checksum = checksum_comp == checksum;
+      bool valid = false;
+
+      if (safety_hooks->compute_checksums != NULL) {
+        int out_count = 0;
+        const uint32_t *checksums = safety_hooks->compute_checksums(msg, &out_count);
+        for (int i = 0; i < out_count && !valid; i++) {
+          valid = (checksum == checksums[i]);
+        }
+      } else if (safety_hooks->compute_checksum != NULL) {
+        valid = (safety_hooks->compute_checksum(msg) == checksum);
+      }
+
+      chk->status.valid_checksum = valid;
     } else {
-      cfg->rx_checks[index].status.valid_checksum = cfg->rx_checks[index].msg[cfg->rx_checks[index].status.index].ignore_checksum;
+      chk->status.valid_checksum = ignore_checksum;
     }
 
     // counter check
-    if ((safety_hooks->get_counter != NULL) && (cfg->rx_checks[index].msg[cfg->rx_checks[index].status.index].max_counter > 0U)) {
+    if ((safety_hooks->get_counter != NULL) && (mchk->max_counter > 0U)) {
       uint8_t counter = safety_hooks->get_counter(msg);
       update_counter(cfg->rx_checks, index, counter);
     } else {
-      cfg->rx_checks[index].status.wrong_counters = cfg->rx_checks[index].msg[cfg->rx_checks[index].status.index].ignore_counter ? 0 : MAX_WRONG_COUNTERS;
+      chk->status.wrong_counters = mchk->ignore_counter ? 0 : MAX_WRONG_COUNTERS;
     }
 
     // quality flag check
-    if ((safety_hooks->get_quality_flag_valid != NULL) && !cfg->rx_checks[index].msg[cfg->rx_checks[index].status.index].ignore_quality_flag) {
-      cfg->rx_checks[index].status.valid_quality_flag = safety_hooks->get_quality_flag_valid(msg);
+    if ((safety_hooks->get_quality_flag_valid != NULL) && !mchk->ignore_quality_flag) {
+      chk->status.valid_quality_flag = safety_hooks->get_quality_flag_valid(msg);
     } else {
-      cfg->rx_checks[index].status.valid_quality_flag = cfg->rx_checks[index].msg[cfg->rx_checks[index].status.index].ignore_quality_flag;
+      chk->status.valid_quality_flag = mchk->ignore_quality_flag;
     }
   }
   return is_msg_valid(cfg->rx_checks, index);
