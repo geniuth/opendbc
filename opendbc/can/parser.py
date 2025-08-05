@@ -59,7 +59,31 @@ class MessageState:
         tmp -= ((tmp >> (sig.size - 1)) & 0x1) * (1 << sig.size)
 
       if not self.ignore_checksum and sig.calc_checksum is not None:
-        if sig.calc_checksum(self.address, sig, bytearray(dat)) != tmp:
+        success = False
+
+        if sig.has_checksum_variants:
+          if sig.checksum_variant_valid:
+            crc, _ = sig.calc_checksum(self.address, sig, bytearray(dat), sig.checksum_variant)
+            success = crc == tmp
+          else:
+            crc, total = sig.calc_checksum(self.address, sig, bytearray(dat), 0)
+            if crc == tmp:
+              sig.checksum_variant = 0
+              sig.checksum_variant_valid = True
+              success = True
+            else:
+              for idx in range(1, total):
+                crc, _ = sig.calc_checksum(self.address, sig, bytearray(dat), idx)
+                if crc == tmp:
+                  sig.checksum_variant = idx
+                  sig.checksum_variant_valid = True
+                  success = True
+                  break
+        else:
+          crc = sig.calc_checksum(self.address, sig, bytearray(dat))
+          success = crc == tmp
+
+        if not success:
           checksum_failed = True
 
       if not self.ignore_counter and sig.type == 1:  # COUNTER
