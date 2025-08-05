@@ -37,10 +37,11 @@ class CANPacker:
     sig_checksum = next((s for s in msg.sigs.values() if s.type > SignalType.COUNTER), None)
     if sig_checksum and sig_checksum.calc_checksum:
       if sig_checksum.has_checksum_variants:
-        if sig_checksum.checksum_variant_valid:
-          checksum, total = sig_checksum.calc_checksum(address, sig_checksum, dat, sig_checksum.checksum_variant)
+        variant = DBC.checksum_registry.get(address)
+        if variant is not None:
+          checksum, total = sig_checksum.calc_checksum(address, sig_checksum, dat, variant)
         else:
-          checksum = 0
+          checksum = 0  # fallback, no CRC will be set
       else:
         checksum = sig_checksum.calc_checksum(address, sig_checksum, dat)
       set_value(dat, sig_checksum, checksum)
