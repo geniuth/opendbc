@@ -45,6 +45,7 @@ class Signal:
   is_little_endian: bool
   checksum_variant: int
   checksum_variant_valid: bool
+  has_checksum_variants: bool = False
   type: int = SignalType.DEFAULT
   calc_checksum: 'Callable[[int, Signal, bytearray], int] | None' = None
 
@@ -207,6 +208,7 @@ def get_checksum_state(dbc_name: str) -> ChecksumState | None:
 
 def set_signal_type(sig: Signal, chk: ChecksumState | None, dbc_name: str, line_num: int) -> None:
   sig.calc_checksum = None
+  sig.has_checksum_variants = False
   if chk:
     if chk.setup_signal:
       chk.setup_signal(sig, dbc_name, line_num)
@@ -215,3 +217,5 @@ def set_signal_type(sig: Signal, chk: ChecksumState | None, dbc_name: str, line_
       sig.calc_checksum = chk.calc_checksum
     elif sig.name == "COUNTER":
       sig.type = SignalType.COUNTER
+    if chk.checksum_variants:
+      sig.has_checksum_variants = True
