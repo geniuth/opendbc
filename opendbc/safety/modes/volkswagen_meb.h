@@ -48,7 +48,7 @@ static uint8_t volkswagen_meb_get_counter(const CANPacket_t *msg) {
 
 const uint32_t* volkswagen_meb_compute_crcs(const CANPacket_t *msg, int *out_count) {
   int len = GET_LEN(msg);
-  static uint8_t results[4];
+  static uint32_t results[4];
   int result_count = 0;
 
   uint8_t crc = 0xFFU;
@@ -86,7 +86,7 @@ const uint32_t* volkswagen_meb_compute_crcs(const CANPacket_t *msg, int *out_cou
   }
 
   *out_count = result_count;
-  return (uint8_t)results;
+  return results;
 }
 
 //static uint32_t volkswagen_meb_compute_crc(const CANPacket_t *msg) {
