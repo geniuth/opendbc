@@ -212,6 +212,7 @@ typedef struct {
 
 typedef uint32_t (*get_checksum_t)(const CANPacket_t *msg);
 typedef uint32_t (*compute_checksum_t)(const CANPacket_t *msg);
+typedef uint32_t (*compute_checksums_t)(const CANPacket_t *msg, int *out_count);
 typedef uint8_t (*get_counter_t)(const CANPacket_t *msg);
 typedef bool (*get_quality_flag_valid_t)(const CANPacket_t *msg);
 
@@ -227,6 +228,7 @@ typedef struct {
   fwd_hook fwd;
   get_checksum_t get_checksum;
   compute_checksum_t compute_checksum;
+  compute_checksums_t compute_checksums;
   get_counter_t get_counter;
   get_quality_flag_valid_t get_quality_flag_valid;
 } safety_hooks;
