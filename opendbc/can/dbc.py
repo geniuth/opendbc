@@ -94,8 +94,8 @@ class DBC:
       lines = f.readlines()
 
     checksum_state = get_checksum_state(self.name)
-    crc_variant = 0
-    crc_variant_valid = False
+    checksum_variant = 0
+    checksum_variant_valid = False
     be_bits = [j + i * 8 for i in range(64) for j in range(7, -1, -1)]
     self.msgs: dict[int, Msg] = {}
     self.addr_to_msg: dict[int, Msg] = {}
