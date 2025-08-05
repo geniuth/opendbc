@@ -172,17 +172,22 @@ def create_aeb_hud(packer, aeb_supported, fcw_active):
   return packer.make_can_msg("ACC_15", 0, values)
 
 
-def volkswagen_mqb_meb_checksum(address: int, sig, d: bytearray) -> int:
+def volkswagen_mqb_meb_checksum(address: int, sig, d: bytearray, variant_index: int = 0) -> tuple[int, int]:
   crc = 0xFF
   for i in range(1, len(d)):
     crc ^= d[i]
     crc = CRC8H2F[crc]
+    
   counter = d[1] & 0x0F
-  const = VOLKSWAGEN_MQB_MEB_CONSTANTS.get(address)
-  if const:
-    crc ^= const[counter]
+  const_variants = VOLKSWAGEN_MQB_MEB_CONSTANTS.get(address)
+  variant_count = len(const_variants) if const_variants else 0
+  
+  if const_variants and 0 <= variant_index < variant_count:
+    variant = const_variants[variant_index]
+    crc ^= variant[counter]
     crc = CRC8H2F[crc]
-  return crc ^ 0xFF
+    
+  return crc ^ 0xFF, variant_count
 
 
 def xor_checksum(address: int, sig, d: bytearray) -> int:
@@ -194,7 +199,7 @@ def xor_checksum(address: int, sig, d: bytearray) -> int:
   return checksum
 
 
-VOLKSWAGEN_MQB_MEB_CONSTANTS: dict[int, list[int]] = {
+VOLKSWAGEN_MQB_MEB_CONSTANTS: dict[int, list[list[int]]] = {
     0x40:  [0x40] * 16,  # Airbag_01
     0x86:  [0x86] * 16,  # LWI_01
     0x9F:  [0xF5] * 16,  # LH_EPS_03
