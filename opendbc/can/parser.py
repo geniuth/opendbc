@@ -62,21 +62,21 @@ class MessageState:
         success = False
 
         if sig.has_checksum_variants:
-          if sig.checksum_variant_valid:
-            crc, _ = sig.calc_checksum(self.address, sig, bytearray(dat), sig.checksum_variant)
+          known_variant = DBC.checksum_registry.get(self.address)
+          
+          if known_variant is not None:
+            crc, total = sig.calc_checksum(self.address, sig, bytearray(dat), known_variant)
             success = crc == tmp
           else:
             crc, total = sig.calc_checksum(self.address, sig, bytearray(dat), 0)
             if crc == tmp:
-              sig.checksum_variant = 0
-              sig.checksum_variant_valid = True
+              DBC.checksum_registry.set(self.address, 0)
               success = True
             else:
               for idx in range(1, total):
                 crc, _ = sig.calc_checksum(self.address, sig, bytearray(dat), idx)
                 if crc == tmp:
-                  sig.checksum_variant = idx
-                  sig.checksum_variant_valid = True
+                  DBC.checksum_registry.set(self.address, idx)
                   success = True
                   break
         else:
