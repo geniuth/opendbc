@@ -171,6 +171,7 @@ class ChecksumState:
   checksum_start_bit: int
   counter_start_bit: int
   little_endian: bool
+  multiple_crc: bool
   checksum_type: int
   calc_checksum: Callable[[int, Signal, bytearray], int] | None
   setup_signal: Callable[[Signal, str, int], None] | None = None
@@ -178,25 +179,25 @@ class ChecksumState:
 
 def get_checksum_state(dbc_name: str) -> ChecksumState | None:
   if dbc_name.startswith(("honda_", "acura_")):
-    return ChecksumState(4, 2, 3, 5, False, SignalType.HONDA_CHECKSUM, honda_checksum)
+    return ChecksumState(4, 2, 3, 5, False, False,SignalType.HONDA_CHECKSUM, honda_checksum)
   elif dbc_name.startswith(("toyota_", "lexus_")):
-    return ChecksumState(8, -1, 7, -1, False, SignalType.TOYOTA_CHECKSUM, toyota_checksum)
+    return ChecksumState(8, -1, 7, -1, False, False,SignalType.TOYOTA_CHECKSUM, toyota_checksum)
   elif dbc_name.startswith("hyundai_canfd_generated"):
-    return ChecksumState(16, -1, 0, -1, True, SignalType.HKG_CAN_FD_CHECKSUM, hkg_can_fd_checksum)
+    return ChecksumState(16, -1, 0, -1, True, False,SignalType.HKG_CAN_FD_CHECKSUM, hkg_can_fd_checksum)
   elif dbc_name.startswith(("vw_mqb", "vw_mqbevo", "vw_meb")):
-    return ChecksumState(8, 4, 0, 0, True, SignalType.VOLKSWAGEN_MQB_MEB_CHECKSUM, volkswagen_mqb_meb_checksum)
+    return ChecksumState(8, 4, 0, 0, True, True, SignalType.VOLKSWAGEN_MQB_MEB_CHECKSUM, volkswagen_mqb_meb_checksum)
   elif dbc_name.startswith("vw_pq"):
-    return ChecksumState(8, 4, 0, -1, True, SignalType.XOR_CHECKSUM, xor_checksum)
+    return ChecksumState(8, 4, 0, -1, True, False,SignalType.XOR_CHECKSUM, xor_checksum)
   elif dbc_name.startswith("subaru_global_"):
-    return ChecksumState(8, -1, 0, -1, True, SignalType.SUBARU_CHECKSUM, subaru_checksum)
+    return ChecksumState(8, -1, 0, -1, True, False,SignalType.SUBARU_CHECKSUM, subaru_checksum)
   elif dbc_name.startswith("chrysler_"):
-    return ChecksumState(8, -1, 7, -1, False, SignalType.CHRYSLER_CHECKSUM, chrysler_checksum)
+    return ChecksumState(8, -1, 7, -1, False, False,SignalType.CHRYSLER_CHECKSUM, chrysler_checksum)
   elif dbc_name.startswith("fca_giorgio"):
-    return ChecksumState(8, -1, 7, -1, False, SignalType.FCA_GIORGIO_CHECKSUM, fca_giorgio_checksum)
+    return ChecksumState(8, -1, 7, -1, False, False,SignalType.FCA_GIORGIO_CHECKSUM, fca_giorgio_checksum)
   elif dbc_name.startswith("comma_body"):
-    return ChecksumState(8, 4, 7, 3, False, SignalType.BODY_CHECKSUM, body_checksum)
+    return ChecksumState(8, 4, 7, 3, False, False,SignalType.BODY_CHECKSUM, body_checksum)
   elif dbc_name.startswith("tesla_model3_party"):
-    return ChecksumState(8, -1, 0, -1, True, SignalType.TESLA_CHECKSUM, tesla_checksum, tesla_setup_signal)
+    return ChecksumState(8, -1, 0, -1, True, False,SignalType.TESLA_CHECKSUM, tesla_checksum, tesla_setup_signal)
   return None
 
 
