@@ -66,7 +66,7 @@ const uint32_t* volkswagen_meb_compute_crcs(const CANPacket_t *msg, int *out_cou
       for (int i = 0; i < count; i++) {                               \
         uint8_t c = crc ^ variants[i][counter];                      \
         c = volkswagen_crc8_lut_8h2f[c];                              \
-        results[result_count++] = (uint32_t)(c ^ 0xFFU);             \
+        results[result_count++] = c ^ 0xFFU;                           \
       }                                                              \
       break;                                                         \
     }
@@ -86,7 +86,7 @@ const uint32_t* volkswagen_meb_compute_crcs(const CANPacket_t *msg, int *out_cou
   }
 
   *out_count = result_count;
-  return results;
+  return (uint8_t)results;
 }
 
 //static uint32_t volkswagen_meb_compute_crc(const CANPacket_t *msg) {
