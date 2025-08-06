@@ -185,8 +185,8 @@ BO_ 247 MEB_HVEM_02: 8 XXX
  SG_ NEW_SIGNAL_2 : 54|7@1+ (1,0) [0|3] "" XXX
 
 BO_ 252 ESC_51: 48 XXX
- SG_ CHECKSUM : 0|8@1+ (1,0) [0|255] "" XXX
- SG_ COUNTER : 8|4@1+ (1,0) [0|15] "" XXX
+ SG_ CHK : 0|8@1+ (1,0) [0|255] "" XXX
+ SG_ CNT : 8|4@1+ (1,0) [0|15] "" XXX
  SG_ NEW_SIGNAL_2 : 14|6@1+ (1,0) [0|3] "" XXX
  SG_ AEB_Breaking_01 : 24|8@1+ (1,0) [0|255] "" XXX
  SG_ AEB_Breaking_02 : 32|8@1+ (1,0) [0|255] "" XXX
@@ -232,8 +232,8 @@ BO_ 253 ESP_21: 8 Gateway
  SG_ ESC_Neutralschaltung : 63|1@1+ (1,0) [0|1] "" Vector__XXX
 
 BO_ 258 ESC_50: 48 XXX
- SG_ CHECKSUM : 0|8@1+ (1,0) [0|255] "" XXX
- SG_ COUNTER : 8|4@1+ (1,0) [0|15] "" XXX
+ SG_ CHK : 0|8@1+ (1,0) [0|255] "" XXX
+ SG_ CNT : 8|4@1+ (1,0) [0|15] "" XXX
  SG_ Lateral_Accel : 16|8@1+ (0.15,-18.9) [0|255] "Unit_MeterPerSquareSecond" XXX
  SG_ Longitudinal_Accel : 24|10@1+ (0.03125,-16) [0|255] "Unit_MeterPerSquareSecond" XXX
  SG_ Yaw_Rate : 40|14@1+ (0.01,0) [0|16383] "Unit_DegreePerSecond" XXX
@@ -348,8 +348,8 @@ BO_ 313 VMM_02: 32 XXX
  SG_ FCW_Reaction_3 : 88|5@1+ (1,0) [0|31] "" XXX
 
 BO_ 317 QFK_01: 32 XXX
- SG_ CHECKSUM : 0|8@1+ (1,0) [0|255] "" XXX
- SG_ COUNTER : 8|4@1+ (1,0) [0|15] "" XXX
+ SG_ CHK : 0|8@1+ (1,0) [0|255] "" XXX
+ SG_ CNT : 8|4@1+ (1,0) [0|15] "" XXX
  SG_ NEW_SIGNAL_5 : 12|1@0+ (1,0) [0|1] "" XXX
  SG_ HCA_No_Override : 14|1@0+ (1,0) [0|1] "" XXX
  SG_ NEW_SIGNAL_8 : 16|1@0+ (1,0) [0|1] "" XXX
