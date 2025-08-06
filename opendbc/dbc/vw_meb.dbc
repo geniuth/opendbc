@@ -184,7 +184,7 @@ BO_ 247 MEB_HVEM_02: 8 XXX
  SG_ NEW_SIGNAL_3 : 44|10@1+ (1,0) [0|7] "" XXX
  SG_ NEW_SIGNAL_2 : 54|7@1+ (1,0) [0|3] "" XXX
 
-BO_ 252 ESC_51: 48 XXX
+BO_ 252 ESC_51: 64 XXX
  SG_ CHK : 0|8@1+ (1,0) [0|255] "" XXX
  SG_ CNT : 8|4@1+ (1,0) [0|15] "" XXX
  SG_ NEW_SIGNAL_2 : 14|6@1+ (1,0) [0|3] "" XXX
@@ -258,7 +258,7 @@ BO_ 261 VMM_01: 8 XXX
  SG_ NEW_SIGNAL_1 : 40|2@1+ (1,0) [0|3] "" XXX
  SG_ Brake : 53|7@1+ (1,0) [0|3] "" XXX
 
-BO_ 267 Motor_51: 32 XXX
+BO_ 267 Motor_51: 48 XXX
  SG_ CHK : 0|8@1+ (1,0) [0|255] "" XXX
  SG_ CNT : 8|4@1+ (1,0) [0|15] "" XXX
  SG_ Accel_Pedal_Pressure : 12|9@1+ (0.4,0) [0|255] "" XXX
@@ -2166,7 +2166,7 @@ BO_ 380196019 MEB_Camera_07: 16 XXX
 
 BO_ 380196036 MEB_Camera_08: 8 XXX
 
-BO_ 389241616 MEB_Camera_09: 8 XXX
+BO_ 389241616 MEB_Camera_09: 3 XXX
 
 BO_ 389241617 MEB_Camera_10: 8 XXX
 
