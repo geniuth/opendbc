@@ -270,6 +270,9 @@ class Footnote(Enum):
     "Model-years 2022 and beyond may have a combined CAN gateway and BCM, which is supported by openpilot " +
     "in software, but doesn't yet have a harness available from the comma store.",
     Column.HARDWARE)
+  VW_MEB = CarFootnote(
+    "Volkswagen MEB platform is using CAN-FD, which is supported by comma 3x or red panda.",
+    Column.HARDWARE)
 
 
 @dataclass
@@ -481,14 +484,20 @@ class CAR(Platforms):
     chassis_codes={"5F"},
     wmis={WMI.SEAT},
   )
-  CUPRA_BORN_MK1 = VolkswagenMEBPlatformConfig(
-    [
-      VWCarDocs("CUPRA Born 2021"),
-    ],
-    # for CUPRA BORN 77kWh 170 kW, tireStiffnessFactor and centerToFrontRatio are approximations
-    VolkswagenCarSpecs(mass=1950, wheelbase=2.766, steerRatio=15.9, centerToFrontRatio=0.496, tireStiffnessFactor=1.0),
-    chassis_codes={"K1"},
-    wmis={WMI.SEAT},
+  # CUPRA_BORN_MK1 = VolkswagenMEBPlatformConfig(
+  #   [
+  #     VWCarDocs("CUPRA Born 2021"),
+  #   ],
+  #   # for CUPRA BORN 77kWh 170 kW, tireStiffnessFactor and centerToFrontRatio are approximations
+  #   VolkswagenCarSpecs(mass=1950, wheelbase=2.766, steerRatio=15.9, centerToFrontRatio=0.496, tireStiffnessFactor=1.0),
+  #   chassis_codes={"K1"},
+  #   wmis={WMI.SEAT},
+  # )
+  VOLKSWAGEN_ID4_MK1 = VolkswagenMEBPlatformConfig(
+    [VWCarDocs("Volkswagen ID.4 2021-25", footnotes=[Footnote.VW_MEB])],
+    VolkswagenCarSpecs(mass=2099, wheelbase=2.77),
+    chassis_codes={"E2", "E8"},
+    wmis={WMI.VOLKSWAGEN_EUROPE_SUV, WMI.VOLKSWAGEN_USA_SUV},
   )
   SKODA_FABIA_MK4 = VolkswagenMQBPlatformConfig(
     [VWCarDocs("Škoda Fabia 2022-23", footnotes=[Footnote.VW_MQB_A0])],
