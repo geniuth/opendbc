@@ -1033,8 +1033,11 @@ FW_VERSIONS = {
     ],
   },
   CAR.VOLKSWAGEN_ID4_MK1: {
+    (Ecu.engine, 0x7e0, None): [
+      b'\xf1\x870EA906012EC\xf1\x892855',
+    ],
     (Ecu.srs, 0x715, None): [
-      b'\xf1\x875WA959655R \xf1\x890717',
+      b'\xf1\x871EA959655EH\xf1\x890381',
     ],
     (Ecu.eps, 0x712, None): [
       b'\xf1\x871EA907144AQ\xf1\x895033',
@@ -1042,6 +1045,15 @@ FW_VERSIONS = {
     (Ecu.fwdRadar, 0x757, None): [
       b'\xf1\x871EA907572H \xf1\x890234',
     ],
+    # (Ecu.srs, 0x715, None): [
+    #   b'\xf1\x875WA959655R \xf1\x890717',
+    # ],
+    # (Ecu.eps, 0x712, None): [
+    #   b'\xf1\x871EA907144AQ\xf1\x895033',
+    # ],
+    # (Ecu.fwdRadar, 0x757, None): [
+    #   b'\xf1\x871EA907572H \xf1\x890234',
+    # ],
   },
 
   CAR.SKODA_FABIA_MK4: {
