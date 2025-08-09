@@ -484,15 +484,15 @@ class CAR(Platforms):
     chassis_codes={"5F"},
     wmis={WMI.SEAT},
   )
-  # CUPRA_BORN_MK1 = VolkswagenMEBPlatformConfig(
-  #   [
-  #     VWCarDocs("CUPRA Born 2021"),
-  #   ],
-  #   # for CUPRA BORN 77kWh 170 kW, tireStiffnessFactor and centerToFrontRatio are approximations
-  #   VolkswagenCarSpecs(mass=1950, wheelbase=2.766, steerRatio=15.9, centerToFrontRatio=0.496, tireStiffnessFactor=1.0),
-  #   chassis_codes={"K1"},
-  #   wmis={WMI.SEAT},
-  # )
+  CUPRA_BORN_MK1 = VolkswagenMEBPlatformConfig(
+    [
+      VWCarDocs("CUPRA Born 2021"),
+    ],
+    # for CUPRA BORN 77kWh 170 kW, tireStiffnessFactor and centerToFrontRatio are approximations
+    VolkswagenCarSpecs(mass=1950, wheelbase=2.766, steerRatio=15.9, centerToFrontRatio=0.496, tireStiffnessFactor=1.0),
+    chassis_codes={"K1"},
+    wmis={WMI.SEAT},
+  )
   VOLKSWAGEN_ID4_MK1 = VolkswagenMEBPlatformConfig(
     [VWCarDocs("Volkswagen ID.4 2021-25", footnotes=[Footnote.VW_MEB])],
     VolkswagenCarSpecs(mass=2099, wheelbase=2.77),
