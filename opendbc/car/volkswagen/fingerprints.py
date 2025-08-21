@@ -1062,7 +1062,6 @@ FW_VERSIONS = {
       b'\xf1\x871EA907567B \xf1\x890232', # Skoda Enyaq newer model (1)
     ],
   },
-
   CAR.VOLKSWAGEN_ID4_MK1: {
     (Ecu.srs, 0x715, None): [
       b'\xf1\x875WA959655R \xf1\x890717',
