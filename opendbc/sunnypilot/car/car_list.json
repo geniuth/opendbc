@@ -363,16 +363,6 @@
     ],
     "package": "Adaptive Cruise Control (ACC) & Lane Assist"
   },
-  "Volkswagen ID.4 2021-25 2021": {
-    "platform": "VOLKSWAGEN_ID4_MK1",
-    "make": "volkswagen",
-    "brand": "volkswagen",
-    "model": "ID4",
-    "year": [
-      "2022"
-    ],
-    "package": "Adaptive Cruise Control (ACC) & Lane Assist"
-  },
   "Dodge Durango 2020-21": {
     "platform": "DODGE_DURANGO",
     "make": "Dodge",
@@ -869,6 +859,16 @@
       "2020",
       "2021",
       "2022"
+    ],
+    "package": "All"
+  },
+  "Honda Accord 2023": {
+    "platform": "HONDA_ACCORD_11G",
+    "make": "Honda",
+    "brand": "honda",
+    "model": "Accord",
+    "year": [
+      "2023"
     ],
     "package": "All"
   },
@@ -1449,6 +1449,16 @@
     ],
     "package": "Smart Cruise Control (SCC)"
   },
+  "Hyundai Kona Electric Non-SCC 2019": {
+    "platform": "HYUNDAI_KONA_EV_NON_SCC",
+    "make": "Hyundai",
+    "brand": "hyundai",
+    "model": "Kona Electric Non-SCC",
+    "year": [
+      "2019"
+    ],
+    "package": "No Smart Cruise Control (Non-SCC)"
+  },
   "Hyundai Kona Hybrid 2020": {
     "platform": "HYUNDAI_KONA_HEV",
     "make": "Hyundai",
@@ -1716,6 +1726,16 @@
       "2021"
     ],
     "package": "Smart Cruise Control (SCC)"
+  },
+  "Kia Ceed Plug-in Hybrid Non-SCC 2022": {
+    "platform": "KIA_CEED_PHEV_2022_NON_SCC",
+    "make": "Kia",
+    "brand": "hyundai",
+    "model": "Ceed Plug-in Hybrid Non-SCC",
+    "year": [
+      "2022"
+    ],
+    "package": "No Smart Cruise Control (Non-SCC)"
   },
   "Kia EV6 (Southeast Asia only) 2022-24": {
     "platform": "KIA_EV6",
