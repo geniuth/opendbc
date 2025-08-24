@@ -149,6 +149,9 @@ struct OnroadEventDEPRECATED @0x9b1657f34caf3ad3 {
     lowSpeedLockoutDEPRECATED @31;
     lkasDisabledDEPRECATED @107;
     soundsUnavailableDEPRECATED @56;
+
+    # NDA Neokii
+    slowingDownSpeedSound @126;
   }
 }
 
@@ -373,6 +376,8 @@ struct CarControl {
   currentCurvature @17 :Float32;  # From vehicle model
   curvatureControllerActive @18: Bool;
   currentCurvatureNoRoll @19 :Float32;  # From vehicle model without roll
+  # NDA
+  speedDown @20;
 
   cruiseControl @4 :CruiseControl;
   hudControl @5 :HUDControl;
