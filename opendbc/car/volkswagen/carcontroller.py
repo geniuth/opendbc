@@ -286,7 +286,11 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
         if CC.cruiseControl.speedLimit and CS.out.cruiseState.speedLimit != 0 and self.speed_limit_last != CS.out.cruiseState.speedLimit:
           self.speed_limit_changed_timer = self.frame 
         self.speed_limit_last = CS.out.cruiseState.speedLimit
-        sl_active = self.frame - self.speed_limit_changed_timer < 400
+        # tjddyd: keep the cluster speed-limit lit for as long as a limit is present, instead
+        # of the brief change-triggered 4s flash. With the TMAP camera-centric source,
+        # cruiseState.speedLimit is non-zero only while a speed camera is ahead and clears to 0
+        # after passing, so the dash sign turns on at the camera and off once it is behind.
+        sl_active = CS.out.cruiseState.speedLimit != 0
         speed_limit = CS.out.cruiseState.speedLimitPredicative if sl_predicative_active else (CS.out.cruiseState.speedLimit if sl_active else 0)
           
         acc_hud_event = self.CCS.acc_hud_event(acc_hud_status, CS.esp_hold_confirmation, sl_predicative_active, CS.speed_limit_predicative_type, sl_active)
