@@ -407,7 +407,9 @@ class CarState(CarStateBase, MadsCarState):
         ret.cruiseState.speedLimit = self._tmap_cluster_speed_limit
 
     ret_sp.speedLimit = ret.cruiseState.speedLimit
-    
+    # tjddyd VW MEB opt-in: cruise stalk 2nd detent (big step). 1 = Tip_Stufe_2.
+    ret_sp.graTipStufe2 = bool(pt_cp.vl["GRA_ACC_01"]["GRA_Tip_Stufe_2"])
+
     # Update button states for turn signals and ACC controls, capture all ACC button state/config for passthrough
     # turn signal effect
     self.left_blinker_active  = bool(pt_cp.vl["Blinkmodi_02"]["BM_links"])

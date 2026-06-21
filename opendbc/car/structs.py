@@ -170,3 +170,4 @@ class CarControlSP:
 @auto_dataclass
 class CarStateSP:
   speedLimit: float = auto_field()
+  graTipStufe2: bool = auto_field()  # VW MEB: cruise stalk 2nd detent (big step), tjddyd opt-in
