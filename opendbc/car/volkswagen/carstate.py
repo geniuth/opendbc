@@ -9,6 +9,13 @@ from opendbc.car.volkswagen.values import DBC, CanBus, NetworkLocation, Transmis
 from opendbc.car.volkswagen.speed_limit_manager import SpeedLimitManager
 from opendbc.sunnypilot.car.volkswagen.mads import MadsCarState
 
+# tjddyd: optional openpilot Params, used only to read the TMAP road limit for the MEB
+# cluster display. Guarded so opendbc keeps importing standalone (e.g. for unit tests).
+try:
+  from openpilot.common.params import Params
+except Exception:
+  Params = None
+
 ButtonType = structs.CarState.ButtonEvent.Type
 
 
@@ -30,6 +37,9 @@ class CarState(CarStateBase, MadsCarState):
     self.enable_pred_react_to_curves = False
     self.speed_limit_mgr = SpeedLimitManager(CP, speed_limit_max_kph=120, predicative=False, predicative_speed_limit=False, predicative_curve=False)
     self.speed_limit_predicative_type = 0
+    # tjddyd: TMAP road limit (m/s) for the MEB cluster display, refreshed ~2x/sec from a param
+    self._tmap_params = Params() if Params is not None else None
+    self._tmap_cluster_speed_limit = 0.
     self.force_rhd_for_bsm = False
     self.acc_type = 0
     self.hca_status_last = None
@@ -382,6 +392,19 @@ class CarState(CarStateBase, MadsCarState):
     ret.cruiseState.speedLimit = self.speed_limit_mgr.get_speed_limit()
     ret.cruiseState.speedLimitPredicative = self.speed_limit_mgr.get_speed_limit_predicative()
     self.speed_limit_predicative_type = self.speed_limit_mgr.get_speed_limit_predicative_type()
+
+    # tjddyd: EU MEB has no Korean nav PSD, so the cluster speed limit is always empty. Fall
+    # back to the TMAP road limit (written by the openpilot mapd at ~1Hz) so the cluster
+    # (ACC_Tempolimit) shows it. Read throttled to avoid per-frame param IO. Only the car
+    # source is touched and the speed-limit policy is map_data_only, so this never caps speed.
+    if self._tmap_params is not None and (self.CP.flags & VolkswagenFlags.MEB):
+      if self.frame % 50 == 0:
+        try:
+          self._tmap_cluster_speed_limit = int(self._tmap_params.get("TmapRoadLimit", return_default=True)) * CV.KPH_TO_MS
+        except Exception:
+          self._tmap_cluster_speed_limit = 0.
+      if ret.cruiseState.speedLimit == 0 and self._tmap_cluster_speed_limit > 0:
+        ret.cruiseState.speedLimit = self._tmap_cluster_speed_limit
 
     ret_sp.speedLimit = ret.cruiseState.speedLimit
     
