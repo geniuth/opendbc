@@ -8,6 +8,7 @@ from opendbc.car.interfaces import CarControllerBase
 from opendbc.car.volkswagen import mlbcan, mqbcan, pqcan, mebcan
 from opendbc.car.volkswagen.values import CanBus, CarControllerParams, VolkswagenFlags
 from opendbc.car.volkswagen.mebutils import LongControlJerk, LongControlLimit, map_speed_to_acc_tempolimit
+from opendbc.car.volkswagen.speed_limit_manager import PSD_TYPE_CURV_SPEED
 
 from opendbc.sunnypilot.car.volkswagen.icbm import IntelligentCruiseButtonManagementInterface
 
@@ -283,6 +284,12 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
                                                         CC.cruiseControl.override or CS.out.gasPressed)
           
         sl_predicative_active = True if CC.cruiseControl.speedLimitPredicative and CS.out.cruiseState.speedLimitPredicative != 0 else False
+        # tjddyd: TMAP curve event injected via carstate (MEB) -> activate the predictive CURVE
+        # display directly from the injected value, since there is no stock PSD/CC predictive flag
+        # on an EU import. Mirrors how the camera sign is driven from cruiseState.speedLimit.
+        if (self.CP.flags & VolkswagenFlags.MEB) and CS.out.cruiseState.speedLimitPredicative != 0 \
+           and CS.speed_limit_predicative_type == PSD_TYPE_CURV_SPEED:
+          sl_predicative_active = True
         if CC.cruiseControl.speedLimit and CS.out.cruiseState.speedLimit != 0 and self.speed_limit_last != CS.out.cruiseState.speedLimit:
           self.speed_limit_changed_timer = self.frame 
         self.speed_limit_last = CS.out.cruiseState.speedLimit
