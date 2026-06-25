@@ -423,15 +423,15 @@ class CarState(CarStateBase, MadsCarState):
           self._tmap_curve_speed = 0.
           self._tmap_turn_speed = 0.
       # only inject when no camera limit is active (camera sign keeps top priority).
-      # Among predictive events a nav turn/intersection wins over a vision curve.
-      # Net cluster alert priority: camera > turn (intersection) > curve.
+      # Among predictive events a vision curve wins over a nav turn/intersection.
+      # Net cluster alert priority: camera > curve > turn (intersection).
       if ret.cruiseState.speedLimit == 0:
-        if self._tmap_turn_speed > 0:
+        if self._tmap_curve_speed > 0:
+          ret.cruiseState.speedLimitPredicative = self._tmap_curve_speed
+          self.speed_limit_predicative_type = PSD_TYPE_CURV_SPEED  # -> ACC_Events 6 (curve)
+        elif self._tmap_turn_speed > 0:
           ret.cruiseState.speedLimitPredicative = self._tmap_turn_speed
           self.speed_limit_predicative_type = PSD_TYPE_TURN  # -> ACC_Events 9 (intersection)
-        elif self._tmap_curve_speed > 0:
-          ret.cruiseState.speedLimitPredicative = self._tmap_curve_speed
-          self.speed_limit_predicative_type = PSD_TYPE_CURV_SPEED
 
     ret_sp.speedLimit = ret.cruiseState.speedLimit
     # tjddyd VW MEB opt-in: cruise stalk 2nd detent (big step). 1 = Tip_Stufe_2.
