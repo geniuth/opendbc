@@ -6,7 +6,7 @@ from opendbc.car.interfaces import CarStateBase
 from opendbc.car.common.conversions import Conversions as CV
 from opendbc.car.volkswagen.values import DBC, CanBus, NetworkLocation, TransmissionType, GearShifter, \
                                                       CarControllerParams, VolkswagenFlags, RADAR_DISABLE_STATE
-from opendbc.car.volkswagen.speed_limit_manager import SpeedLimitManager, PSD_TYPE_CURV_SPEED
+from opendbc.car.volkswagen.speed_limit_manager import SpeedLimitManager, PSD_TYPE_CURV_SPEED, PSD_TYPE_SPEED_LIMIT
 from opendbc.sunnypilot.car.volkswagen.mads import MadsCarState
 
 # tjddyd: optional openpilot Params, used only to read the TMAP road limit for the MEB
@@ -42,6 +42,8 @@ class CarState(CarStateBase, MadsCarState):
     self._tmap_cluster_speed_limit = 0.
     # tjddyd: TMAP turn/curve target speed (m/s) for the cluster predictive CURVE event
     self._tmap_turn_speed = 0.
+    # tjddyd: TMAP speed-bump pass speed (m/s) for the cluster predictive "speed limit ahead" event
+    self._tmap_bump_speed = 0.
     self.force_rhd_for_bsm = False
     self.acc_type = 0
     self.hca_status_last = None
@@ -412,14 +414,24 @@ class CarState(CarStateBase, MadsCarState):
       # (ACC_Events=6) so a turn is shown distinctly from a speed-camera sign. Only inject when
       # no camera limit is active, so the camera sign keeps priority and the two never collide.
       # TmapTurnSpeed (kph) is written by the openpilot mapd while the turn controller is active.
+      # tjddyd: TMAP speed bump -> drive the cluster's predictive "speed limit ahead" event
+      # (ACC_Events=4) with the bump pass speed, distinct from both the camera sign and the curve
+      # event. TmapBumpSpeed (kph) is written by the openpilot mapd while a bump is ahead.
       if self.frame % 50 == 0:
         try:
           self._tmap_turn_speed = int(self._tmap_params.get("TmapTurnSpeed", return_default=True)) * CV.KPH_TO_MS
+          self._tmap_bump_speed = int(self._tmap_params.get("TmapBumpSpeed", return_default=True)) * CV.KPH_TO_MS
         except Exception:
           self._tmap_turn_speed = 0.
-      if ret.cruiseState.speedLimit == 0 and self._tmap_turn_speed > 0:
-        ret.cruiseState.speedLimitPredicative = self._tmap_turn_speed
-        self.speed_limit_predicative_type = PSD_TYPE_CURV_SPEED
+          self._tmap_bump_speed = 0.
+      # only inject when no camera limit is active (camera sign keeps priority); turn wins over bump
+      if ret.cruiseState.speedLimit == 0:
+        if self._tmap_turn_speed > 0:
+          ret.cruiseState.speedLimitPredicative = self._tmap_turn_speed
+          self.speed_limit_predicative_type = PSD_TYPE_CURV_SPEED
+        elif self._tmap_bump_speed > 0:
+          ret.cruiseState.speedLimitPredicative = self._tmap_bump_speed
+          self.speed_limit_predicative_type = PSD_TYPE_SPEED_LIMIT  # -> ACC_Events 4 (ahead)
 
     ret_sp.speedLimit = ret.cruiseState.speedLimit
     # tjddyd VW MEB opt-in: cruise stalk 2nd detent (big step). 1 = Tip_Stufe_2.
