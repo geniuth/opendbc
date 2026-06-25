@@ -1,6 +1,6 @@
 from opendbc.car.volkswagen.mebutils import map_speed_to_acc_tempolimit
 from opendbc.car.volkswagen.values import VolkswagenFlags
-from opendbc.car.volkswagen.speed_limit_manager import PSD_TYPE_CURV_SPEED
+from opendbc.car.volkswagen.speed_limit_manager import PSD_TYPE_CURV_SPEED, PSD_TYPE_TURN
 from opendbc.car.common.conversions import Conversions as CV
 
 ACCEL_INACTIVE = 3.01
@@ -281,6 +281,8 @@ def acc_hud_event(acc_hud_control, esp_hold, speed_limit_predicative, speed_limi
   elif acc_hud_control in (ACC_HUD_ACTIVE, ACC_HUD_OVERRIDE) and speed_limit_predicative:
     if speed_limit_predicative_type == PSD_TYPE_CURV_SPEED:
       acc_event = 6 # acc limited by curve (predicative)
+    elif speed_limit_predicative_type == PSD_TYPE_TURN:
+      acc_event = 9 # tjddyd: nav TBT turn / intersection (predicative)
     else:
       acc_event = 4 # acc limited by speed limit by nav (predicative)
   elif acc_hud_control in (ACC_HUD_ACTIVE, ACC_HUD_OVERRIDE) and speed_limit:
