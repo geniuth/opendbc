@@ -301,7 +301,7 @@ def get_desired_gap(distance_bars, desired_gap, current_gap_signal):
   return gap
 
 
-def create_acc_hud_control(packer, bus, acc_control, set_speed, lead_visible, distance_bars, show_distance_bars, esp_hold, distance, desired_gap, fcw_alert, acc_event, speed_limit):
+def create_acc_hud_control(packer, bus, acc_control, set_speed, lead_visible, distance_bars, show_distance_bars, esp_hold, distance, desired_gap, fcw_alert, acc_event, speed_limit, event_speed=None):
 
   values = {
     "ACC_Status_ACC":                acc_control,
@@ -322,7 +322,7 @@ def create_acc_hud_control(packer, bus, acc_control, set_speed, lead_visible, di
     "Street_Color":                  1 if acc_control in (ACC_HUD_ACTIVE, ACC_HUD_OVERRIDE) else 0, # light grey (1) or dark (0) street
     "Lead_Brightness":               3 if acc_control == ACC_HUD_ACTIVE else 0, # object shows in colour
     "ACC_Events":                    acc_event, # e.g. pACC Events
-    "ACC_Event_Wunschgeschw":        speed_limit * CV.MS_TO_KPH, # this speed is shown for curve event speeds, not for speed signs (speed signs in "ACC_Tempolimit")
+    "ACC_Event_Wunschgeschw":        (speed_limit if event_speed is None else event_speed) * CV.MS_TO_KPH, # this speed is shown for curve event speeds, not for speed signs (speed signs in "ACC_Tempolimit")
     "Zeitluecke_1":                  get_desired_gap(distance_bars, desired_gap, 1), # desired distance to lead object for distance bar 1
     "Zeitluecke_2":                  get_desired_gap(distance_bars, desired_gap, 2), # desired distance to lead object for distance bar 2
     "Zeitluecke_3":                  get_desired_gap(distance_bars, desired_gap, 3), # desired distance to lead object for distance bar 3
