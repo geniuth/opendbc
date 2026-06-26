@@ -481,6 +481,10 @@ class CarState(CarStateBase, MadsCarState):
         ret.batteryDetails.soc          = ret.batteryDetails.charge / ret.batteryDetails.capacity * 100 if ret.batteryDetails.capacity > 0 else 0 # battery SoC in percent
         ret.batteryDetails.power        = alt_cp.vl["MEB_HVEM_01"]["Engine_Power"] # engine power output
         ret.batteryDetails.temperature  = alt_cp.vl["DCDC_03"]["DC_Temperatur"] # dcdc converter temperature
+
+        # 에어컨 정보 (전용 토출 온도 신호가 없어 DC_Temperatur를 토출 온도로 사용)
+        ret.airConditionerDetails.outletTemperature = alt_cp.vl["DCDC_03"]["DC_Temperatur"]  # °C
+        ret.airConditionerDetails.pressure          = alt_cp.vl["Klima_Sensor_04"]["DS_Kaeltemittel_P"]  # 냉매 압력 (bar)
       
     MadsCarState.update_mads(self, ret, pt_cp, hca_status)
 
@@ -642,9 +646,18 @@ class CarState(CarStateBase, MadsCarState):
     if CP.networkLocation == NetworkLocation.gateway:
       if not (CP.flags & VolkswagenFlags.DISABLE_RADAR):
         cam_messages.append(("AWV_03", 1)) # Front Collision Detection (1 Hz when inactive, 50 Hz when active)
-      
+
+    alt_messages = []
+    if CP.networkLocation == NetworkLocation.gateway:
+      # 에어컨 정보용 메시지 (gateway 모드에서 alt = 파워트레인 CAN).
+      # freq=0 으로 등록하여 alive 체크에 영향(canValid)을 주지 않으면서 값만 받는다.
+      alt_messages += [
+        ("DCDC_03", 0),          # DC_Temperatur (토출 온도 대용)
+        ("Klima_Sensor_04", 0),  # DS_Kaeltemittel_P (냉매 압력)
+      ]
+
     return {
       Bus.pt: CANParser(DBC[CP.carFingerprint][Bus.pt], pt_messages, CanBus(CP).pt),
       Bus.cam: CANParser(DBC[CP.carFingerprint][Bus.pt], cam_messages, CanBus(CP).cam),
-      Bus.alt: CANParser(DBC[CP.carFingerprint][Bus.pt], [], CanBus(CP).alt),
+      Bus.alt: CANParser(DBC[CP.carFingerprint][Bus.pt], alt_messages, CanBus(CP).alt),
     }
