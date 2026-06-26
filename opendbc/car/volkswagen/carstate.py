@@ -44,6 +44,11 @@ class CarState(CarStateBase, MadsCarState):
     self._tmap_curve_speed = 0.
     # tjddyd: TMAP nav TBT turn target speed (m/s) for the cluster predictive INTERSECTION event
     self._tmap_turn_speed = 0.
+    # tjddyd: live camera / speed-bump target speeds (m/s) + bump cluster glyph code, shown by
+    # carcontroller in ACC_Event_Wunschgeschw (camera keeps its sign; bump has no sign)
+    self._tmap_camera_speed = 0.
+    self._tmap_bump_speed = 0.
+    self._bump_cluster_event = 0
     self.force_rhd_for_bsm = False
     self.acc_type = 0
     self.hca_status_last = None
@@ -419,6 +424,9 @@ class CarState(CarStateBase, MadsCarState):
         try:
           self._tmap_curve_speed = int(self._tmap_params.get("TmapCurveSpeed", return_default=True)) * CV.KPH_TO_MS
           self._tmap_turn_speed = int(self._tmap_params.get("TmapTurnSpeed", return_default=True)) * CV.KPH_TO_MS
+          self._tmap_camera_speed = int(self._tmap_params.get("TmapCameraSpeed", return_default=True)) * CV.KPH_TO_MS
+          self._tmap_bump_speed = int(self._tmap_params.get("TmapBumpSpeed", return_default=True)) * CV.KPH_TO_MS
+          self._bump_cluster_event = int(self._tmap_params.get("BumpClusterEvent", return_default=True))
         except Exception:
           self._tmap_curve_speed = 0.
           self._tmap_turn_speed = 0.

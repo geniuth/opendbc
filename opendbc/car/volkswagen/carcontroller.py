@@ -302,9 +302,20 @@ class CarController(CarControllerBase, IntelligentCruiseButtonManagementInterfac
           
         acc_hud_event = self.CCS.acc_hud_event(acc_hud_status, CS.esp_hold_confirmation, sl_predicative_active, CS.speed_limit_predicative_type, sl_active)
           
+        # tjddyd: live event speed shown in ACC_Event_Wunschgeschw, separate from the speed-limit
+        # sign (ACC_Tempolimit). Camera: keep the sign at the recognised limit, show the live ramp
+        # km/h by the glyph. Speed bump: no sign, use the configurable BumpClusterEvent glyph + the
+        # live bump decel km/h. carcontroller display only; never caps speed.
+        event_speed = None
+        if sl_active and not sl_predicative_active and CS._tmap_camera_speed > 0.:
+          event_speed = CS._tmap_camera_speed
+        elif not sl_active and not sl_predicative_active and CS._tmap_bump_speed > 0. and CS._bump_cluster_event > 0:
+          acc_hud_event = CS._bump_cluster_event
+          event_speed = CS._tmap_bump_speed
+          speed_limit = 0
         can_sends.append(self.CCS.create_acc_hud_control(self.packer_pt, self.CAN.pt, acc_hud_status, hud_control.setSpeed * CV.MS_TO_KPH,
                                                          hud_control.leadVisible, hud_control.leadDistanceBars + 1, show_distance_bars,
-                                                         CS.esp_hold_confirmation, distance, gap, fcw_alert, acc_hud_event, speed_limit))
+                                                         CS.esp_hold_confirmation, distance, gap, fcw_alert, acc_hud_event, speed_limit, event_speed))
 
       else:
         lead_distance = 0
