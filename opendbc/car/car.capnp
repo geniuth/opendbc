@@ -235,6 +235,9 @@ struct CarState {
   # battery data
   batteryDetails @61 :BatteryDetails;
 
+  # air conditioner data
+  airConditionerDetails @66 :AirConditionerDetails;
+
   struct BatteryDetails {
     capacity @0 :Float32;
     charge @1 :Float32;
@@ -244,6 +247,11 @@ struct CarState {
     voltage @5 :Float32;
     current @6 :Float32;
     power @7 :Float32;
+  }
+
+  struct AirConditionerDetails {
+    outletTemperature @0 :Float32;  # 토출 온도 (°C) - DCDC_03.DC_Temperatur 사용 (전용 토출 온도 신호 부재)
+    pressure @1 :Float32;           # 냉매 압력 (bar) - Klima_Sensor_04.DS_Kaeltemittel_P
   }
 
   struct WheelSpeeds {
