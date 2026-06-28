@@ -276,9 +276,7 @@ def acc_hud_status_value(main_switch_on, acc_faulted, long_active, override):
 def acc_hud_event(acc_hud_control, esp_hold, speed_limit_predicative, speed_limit_predicative_type, speed_limit):
   acc_event = 0
   
-  if esp_hold and acc_hud_control == ACC_HUD_ACTIVE:
-    acc_event = 3 # acc ready message at standstill
-  elif acc_hud_control in (ACC_HUD_ACTIVE, ACC_HUD_OVERRIDE) and speed_limit_predicative:
+  if acc_hud_control in (ACC_HUD_ACTIVE, ACC_HUD_OVERRIDE) and speed_limit_predicative:
     if speed_limit_predicative_type == PSD_TYPE_CURV_SPEED:
       acc_event = 6 # acc limited by curve (predicative)
     elif speed_limit_predicative_type == PSD_TYPE_TURN:
@@ -287,6 +285,8 @@ def acc_hud_event(acc_hud_control, esp_hold, speed_limit_predicative, speed_limi
       acc_event = 4 # acc limited by speed limit by nav (predicative)
   elif acc_hud_control in (ACC_HUD_ACTIVE, ACC_HUD_OVERRIDE) and speed_limit:
     acc_event = 5 # acc limited by speed limit by camera (recently detected)
+  elif esp_hold and acc_hud_control == ACC_HUD_ACTIVE:
+    acc_event = 3 # tjddyd: acc ready at standstill -- lowest priority (camera/bump/curve win)
 
   return acc_event
   
