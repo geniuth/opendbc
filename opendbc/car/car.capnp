@@ -250,8 +250,8 @@ struct CarState {
   }
 
   struct AirConditionerDetails {
-    outletTemperature @0 :Float32;  # 토출 온도 (°C) - DCDC_03.DC_Temperatur 사용 (전용 토출 온도 신호 부재)
-    pressure @1 :Float32;           # 냉매 압력 (bar) - Klima_Sensor_04.DS_Kaeltemittel_P
+    outletTemperature @0 :Float32;  # 토출 온도 (°C) — hvac_uds_d UDS
+    pressure @1 :Float32;           # 냉매 압력 (bar) — hvac_uds_d UDS
   }
 
   struct WheelSpeeds {
